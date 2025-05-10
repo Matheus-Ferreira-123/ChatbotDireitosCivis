@@ -37,6 +37,8 @@ def main():
 
     while True:
         user_input = input("> ").strip()
+        if user_input is None:
+            break
         resposta = conversar(user_input)
         print(resposta)
 
