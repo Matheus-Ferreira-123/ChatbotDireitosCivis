@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot Faculdade</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Chatbot Direitos Civis 🤖</h1>
+    
+    <form method="POST">
+        <input type="text" name="user_input" placeholder="Digite sua mensagem..." style="width: 600px;">
+        <button type="submit">Enviar</button>
+    </form>
+
+    <div style="margin-top:20px;">
+        <h2>Resposta:</h2>
+        {% if resposta %}
+        <div>
+            {{ resposta|safe }}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
