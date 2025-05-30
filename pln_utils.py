@@ -1,8 +1,13 @@
-from config import GEMINI_API_KEY
+from dotenv import load_dotenv
+import os
 import spacy
 import unicodedata
 import fitz
 import google.generativeai as genai
+
+load_dotenv()
+
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-2.0-flash')
@@ -22,14 +27,6 @@ def limpar_texto(texto):
     texto = unicodedata.normalize('NFD', texto).encode('ascii', 'ignore').decode('utf-8')
     return texto
 
-def verificar_categoria_input(texto_usuario, contexto_constituicao):
-    
-    resposta = gerar_resposta(texto_usuario, contexto_constituicao)
-    resposta_limpa = limpar_texto(resposta)
-
-    print(f"Resposta da IA: {resposta_limpa}")
-    return resposta_limpa == "sim"
-
 def extrair_texto_pdf(caminho_pdf):
     doc = fitz.open(caminho_pdf)
     texto = ""
@@ -37,21 +34,27 @@ def extrair_texto_pdf(caminho_pdf):
         texto += pagina.get_text()
     return texto
 
-def gerar_resposta(texto_usuario, contexto_constituicao):
-    prompt = f"""
-    Baseando-se apenas nas informações abaixo retiradas da Constituição Federal,
-    o texto do usuário possui alguma relação com o código de direitos civis brasileiro?
+def conversar(usuario_input):
 
-    Responda SOMENTE com "Sim" ou "Não", sem justificativas ou adições.
-
-    Conteúdo (Constituição Federal):
-    {contexto_constituicao}
-
-    Texto do usuário:
-    {texto_usuario}
-    """
-
-    resposta = model.generate_content(prompt)
-    return resposta.text.strip()
+    chat = model.start_chat(history=[])
     
-TEXTO_CONSTITUICAO = extrair_texto_pdf("documents/codigo_civil.pdf")
+    prompt = f"""
+    Baseando-se SOMENTE com o que foi informado no conteúdo abaixo, responda ao input do usuário apenas
+    se o conteúdo tiver algo a ver com o que está no conteúdo. NÃO invente nada além do que está no conteúdo fornecido.
+    Caso o input não tenha nada relacionado ao que consta nos conteúdos, responda ESTRITAMENTE com essa mensagem:
+    "Desculpe, mas o tema abordado não está relacionado à minha área de conhecimento. Apenas posso responder 
+    perguntas sobre direitos civis brasileiros. Gostaria que eu ajudasse de alguma outra forma?"
+
+    Conteúdo (Código civil):
+    {TEXTO_CIVIL}
+
+    Input do usuário:
+    {usuario_input}
+    """
+    response = chat.send_message(prompt)
+    return response.text.strip()
+    
+    
+TEXTO_CIVIL = extrair_texto_pdf("documents/codigo_civil.pdf")
+#TEXTO_CONSUMIDOR = extrair_texto_pdf("documents/cdc_e_normas_correlatas.pdf")
+#TEXTO_IDOSO = extrair_texto_pdf("documents/estatuto_do_idoso.pdf")

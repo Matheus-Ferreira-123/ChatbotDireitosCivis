@@ -6,22 +6,33 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <header>
-        <h1>⚖️ Chatbot Direitos Civis 🤖</h1>
-    </header>
-
     <main>
-        <form method="POST">
-            <input type="text" name="user_input" placeholder="Digite sua pergunta...">
-            <button type="submit">Enviar</button>
-        </form>
-
-        <section class="resposta">
-            <h2>Resposta</h2>
-            <div class="resposta-texto">
-                {{ (resposta or "Olá! Eu sou um chatbot especializado nos direitos civis brasileiros. Como posso ajudar? (Digite 'sair' para encerrar)") | safe }}
+        <header>
+            <h1>⚖️ ADVOG.AI ⚖️</h1>
+            <h2>SEU CHATBOT DE DIREITOS CIVIS</h2>
+        </header>
+        <div class="bot-info">
+            <div class="bot-info-box">
+                Seja muito bem vindo! Sou um chatbot desenvolvido para responder questões referentes aos direitos civis brasileiros.
+                Sinta-se livre para perguntar; utilizarei exclusivamente o conteúdo das normas legais para lhe oferecer uma
+                resposta adequada.
             </div>
-        </section>
+            <img src="static\Chatbot_3D_Icon_transparent_800_emp.webp" alt="Chatbot"/>
+        </div>
+        <div class="chat-container">
+            <div class="messages">
+                {% for msg in conversas %}
+                    <div class="message {{ msg.tipo }}">
+                        {{ msg.texto }}
+                    </div>
+                {% endfor %}
+            </div>
+    
+            <form method="post">
+                <input type="text" name="user_input" placeholder="Digite sua mensagem..." required>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
     </main>
 </body>
 </html>
