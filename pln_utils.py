@@ -16,10 +16,10 @@ nlp = spacy.load('pt_core_news_sm')
 def detectar_intencao(texto):
     texto_limpo = limpar_texto(texto)
 
-    if any(palavra in texto_limpo for palavra in ["sair", "tchau", "ate mais"]):
-        return "sair"
-    elif any(palavra in texto_limpo for palavra in ["ola", "tudo bem", "como vai", "oi"]):
-        return "ola"
+    if texto_limpo == "/info":
+        return "info"
+    elif texto_limpo.strip() == "":
+        return "blank"
     return "conversa"
 
 def limpar_texto(texto):
@@ -35,7 +35,13 @@ def extrair_texto_pdf(caminho_pdf):
     return texto
 
 def conversar(usuario_input):
-
+    
+    if detectar_intencao(usuario_input) == "info":
+        return "Esse é um projeto desenvolvido na faculdade com foco em oferecer um canal de consulta acessível e eficiente para esclarecer dúvidas gerais sobre o código civil brasileiro, como contratos, processos judiciais, família e sucessões, entre outras; e seu objetivo não é apenas informar, mas fortalecer o acesso à justiça de forma mais rápida e eficaz ao usuário."
+    
+    if detectar_intencao(usuario_input) == "blank":
+        return "Digite uma mensagem válida para que eu consiga lhe ajudar."
+    
     chat = model.start_chat(history=[])
     
     prompt = f"""
@@ -49,7 +55,7 @@ def conversar(usuario_input):
     {TEXTO_CIVIL}
 
     Input do usuário:
-    {usuario_input}
+    {limpar_texto(usuario_input)}
     """
     response = chat.send_message(prompt)
     return response.text.strip()
