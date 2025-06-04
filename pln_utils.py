@@ -18,8 +18,8 @@ def detectar_intencao(texto):
 
     if texto_limpo == "/info":
         return "info"
-    elif texto_limpo.strip() == "":
-        return "blank"
+    elif texto_limpo.strip() == "" or texto_limpo.strip().isnumeric():
+        return "invalid"
     return "conversa"
 
 def limpar_texto(texto):
@@ -39,7 +39,7 @@ def conversar(usuario_input):
     if detectar_intencao(usuario_input) == "info":
         return "Esse é um projeto desenvolvido na faculdade com foco em oferecer um canal de consulta acessível e eficiente para esclarecer dúvidas gerais sobre o código civil brasileiro, como contratos, processos judiciais, família e sucessões, entre outras; e seu objetivo não é apenas informar, mas fortalecer o acesso à justiça de forma mais rápida e eficaz ao usuário."
     
-    if detectar_intencao(usuario_input) == "blank":
+    if detectar_intencao(usuario_input) == "invalid":
         return "Digite uma mensagem válida para que eu consiga lhe ajudar."
     
     chat = model.start_chat(history=[])
